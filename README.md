@@ -1,0 +1,2 @@
+# nekochan2
+mybot
