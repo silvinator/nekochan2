@@ -12,9 +12,7 @@
     "simple-youtube-api": "^5.0.2",
     "ytdl-core": "^0.25.2"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node server.js",
-    "test": "node server.js"
   }
 }
