@@ -1,3 +1,5 @@
+const Discord = require("discord.js");
+let xp = require("../xp.json");
 module.exports.run = async (client, message, args) => {
 
     if (!xp[message.author.id]) {
