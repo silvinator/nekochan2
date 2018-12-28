@@ -1,3 +1,15 @@
+const http = require('http');
+const express = require('express');
+const app = express();
+app.get("/", (request, response) => {
+  console.log(Date.now() + " Ping Received");
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const YouTube = require('simple-youtube-api');
@@ -7,39 +19,33 @@ const queue = new Map();
 const config = require('./config.json');
 const util = require('util');
 const fs = require ("fs");
-const mysql = require("mysql");
-
+const xp = require("./xp.json");
 
 const prefix = config.prefix;
 const ownerID= config.ownerid;
 const servers = {};
-bot.commands = new Discord.Collection();
 
-fs.readdir("./commands/", (err, files) => {
 
-  if(err) console.log(err);
+client.on("message", async message => {
+    if (message.author.bot) return;
+    if(message.content.indexOf(config.prefix) !== 0) return;
 
-  let jsfile = files.filter(f => f.split(".").pop() === "js")
-  if(jsfile.length <= 0){
-    console.log("Couldn't find commands.");
-    return;
-  }
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
 
-  jsfile.forEach((f, i) =>{
-    let props = require(`./commands/${f}`);
-    console.log(`${f} loaded!`);
-    bot.commands.set(props.help.name, props);
-  });
-
+    try {
+        let commandFile = require(`./commands/${command}.js`);
+        commandFile.run(client, message, args);
+    }catch(err){
+      console.log(err);
+    }
 });
 
-function generateXP() {
-    
-    let min = 10;
-    let max = 30;
-    return Math.floor(math.random() * (max - min + 1)) + min ;
-}
 
+client.on("message", async message => {
+if(message.author.bot) return;
+if(message.channel.type === "dm") return;
+  
 let xpAdd = Math.floor(Math.random() * 7) + 8;
 console.log(xpAdd);
 
@@ -69,20 +75,7 @@ if (nxtLvl <= xp[message.author.id].xp) {
 fs.writeFile("./xp.json", JSON.stringify(xp), (err) => {
             if (err) console.log(err)
 
-
-bot.on("message", async message => {
-  if(message.author.bot) return;
-  if(message.channel.type === "dm") return;
-    
-  let prefix = botconfig.prefix;
-  let messageArray = message.content.split(" ");
-  let cmd = messageArray[0];
-  let args = messageArray.slice(1);
-
-  let commandfile = bot.commands.get(cmd.slice(prefix.length));
-  if(commandfile) commandfile.run(bot,message,args, con);
-    
-  
+});
 
 });
 
